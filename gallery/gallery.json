@@ -1,0 +1,26 @@
+[
+    {
+        "id": 1,
+        "filename": "1.png",
+        "title": "Iced Gem Biscuit ",
+        "description": "A childhood classic beloved by many, featuring a crunchy biscuit base topped with a colorful dome of sugary icing gems."
+    },
+    {
+        "id": 2,
+        "filename": "2.png",
+        "title": "Pet Dog",
+        "description": "My best buddy."
+    },
+    {
+        "id": 3,
+        "filename": "3.png",
+        "title": "The Playground",
+        "description": "A nostalgic dragon-shaped playground structure commonly found in older Singapore housing estates."
+    },
+    {
+        "id": 4,
+        "filename": "4.png",
+        "title": "Michael Jackson",
+        "description": "A portrait of Michael Jackson, the King of Pop, known for his iconic music and dance moves."
+    }
+]
