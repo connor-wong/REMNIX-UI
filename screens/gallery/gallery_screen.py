@@ -45,14 +45,17 @@ class GalleryScreen(GridBackground):
         # ── Gallery ──
         images_path = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", "gallery", "images"))
         json_path   = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", "gallery", "gallery.json"))
-        gallery = ImageGallery(folder_path=images_path, json_path=json_path, columns=2, tile_size=250, gap=12)
-        gallery.image_clicked.connect(self._on_image_clicked)
-        layout.addWidget(gallery)
+        self.gallery = ImageGallery(folder_path=images_path, json_path=json_path, columns=2, tile_size=250, gap=12)
+        self.gallery.image_clicked.connect(self._on_image_clicked)
+        layout.addWidget(self.gallery)
 
     # ── Slot – connect to your main controller ────────────────────────────────
     def _on_generate(self):
-        print("Generate button clicked")
+        self.controller.set_mode(4)  # ← switch to Prompt screen
 
     def _on_image_clicked(self, meta: dict):
         self.controller.set_selected_image(meta)  # Store selected image metadata in AppController
         self.controller.set_mode(3)  # Switch to Selected screen
+
+    def refresh_gallery(self):
+        self.gallery.load_images()

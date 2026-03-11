@@ -22,5 +22,11 @@
         "filename": "4.png",
         "title": "Michael Jackson",
         "description": "A portrait of Michael Jackson, the King of Pop, known for his iconic music and dance moves."
+    },
+    {
+        "id": 5,
+        "filename": "5.png",
+        "title": "Generated Memory",
+        "description": "Studio Ghibli Style"
     }
 ]

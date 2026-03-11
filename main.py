@@ -7,6 +7,9 @@ from screens.boot.boot_screen import BootScreen
 from screens.home.home_screen import HomeScreen
 from screens.gallery.gallery_screen import GalleryScreen
 from screens.selected.selected_screen import SelectedScreen
+from screens.prompt.prompt_screen import PromptdScreen 
+from screens.transform.transform_screen import TransformScreen
+from screens.result.result_screen import ResultScreen
 
 # Config
 from config import WINDOW_WIDTH, WINDOW_HEIGHT
@@ -28,15 +31,21 @@ class MainWindow(QMainWindow):
         home = HomeScreen()
         gallery = GalleryScreen()
         selected = SelectedScreen()
+        prompt = PromptdScreen()
+        transform = TransformScreen()
+        result = ResultScreen()
 
         # Controller manages switching and pausing
-        self.controller = AppController(boot, home, gallery, selected)
+        self.controller = AppController(boot, home, gallery, selected, prompt, transform, result)
         self.setCentralWidget(self.controller)  
 
         # Allow screens to have access to App Controller
         home.set_controller(self.controller)
         gallery.set_controller(self.controller)
         selected.set_controller(self.controller)
+        prompt.set_controller(self.controller)
+        transform.set_controller(self.controller)
+        result.set_controller(self.controller)
 
         # Start boot animation (3 seconds total boot time)
         self.start_boot_animation(duration_ms=1500)

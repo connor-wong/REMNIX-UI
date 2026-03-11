@@ -4,3 +4,5 @@ venv
 # other common exclusions
 __pycache__
 *.pyc
+# env files
+.env
