@@ -1,6 +1,6 @@
 # main.py
 from PySide6.QtWidgets import QApplication, QMainWindow
-from PySide6.QtCore import QTimer
+from PySide6.QtCore import QTimer, Qt
 
 # Widgets
 from screens.boot.boot_screen import BootScreen
@@ -12,19 +12,29 @@ from screens.transform.transform_screen import TransformScreen
 from screens.result.result_screen import ResultScreen
 
 # Config
-from config import WINDOW_WIDTH, WINDOW_HEIGHT
+from config import SPI_MODE, WINDOW_WIDTH, WINDOW_HEIGHT, DEBUG_MODE
 
 # Core
 from core.app_controller import AppController
+
+if SPI_MODE:
+    from core.hardware.spi_service import SPIService
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        # self.setWindowFlags(self.windowFlags() | Qt.WindowType.FramelessWindowHint)
-        self.setWindowTitle("REFLEX UI")
+        self.setWindowTitle("REMNIX UI")
         self.setFixedSize(WINDOW_WIDTH, WINDOW_HEIGHT)
         self.setStyleSheet("background-color: #000000;")
+
+        if not DEBUG_MODE:
+            # self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
+            # self.showFullScreen()
+
+            self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
+            self.showMaximized()
+            
 
         # Create widgets
         boot = BootScreen()
@@ -46,6 +56,14 @@ class MainWindow(QMainWindow):
         prompt.set_controller(self.controller)
         transform.set_controller(self.controller)
         result.set_controller(self.controller)
+
+        if SPI_MODE:
+        # SPI Service
+            self.spi = SPIService.get()
+
+            # Allow screens to access SPI Service
+            gallery.set_spi(self.spi)
+            selected.set_spi(self.spi)
 
         # Start boot animation (3 seconds total boot time)
         self.start_boot_animation(duration_ms=1500)

@@ -1,9 +1,10 @@
 # config.py
 
 # =====================
-# Development
+# MODE FLAGS
 # =====================
-DEBUG_MODE = True
+DEBUG_MODE = False
+SPI_MODE = False
 
 # =====================
 # Application

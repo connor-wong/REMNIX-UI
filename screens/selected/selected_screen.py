@@ -1,11 +1,17 @@
 # home/gallery_screen.py
 from PySide6.QtWidgets import QPushButton, QSizePolicy, QVBoxLayout, QHBoxLayout, QLabel
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QThread
 from PySide6.QtGui import QFont, QPixmap
 import os
 
 # Components
 from components import GridBackground, GradientButton, OrangeButton
+
+# Config
+from config import SPI_MODE
+
+# Workers
+from core.workers.spi_worker import SPIWorker
 
 class SelectedScreen(GridBackground):
     def __init__(self, parent=None):
@@ -15,6 +21,9 @@ class SelectedScreen(GridBackground):
     def set_controller(self, controller):
         # Allow external access to the AppController
         self.controller = controller
+
+    def set_spi(self, spi):
+        self.spi = spi
 
     # ── Layout ────────────────────────────────────────────────────────────────
     def build_ui(self):
@@ -118,8 +127,14 @@ class SelectedScreen(GridBackground):
         if meta is not None:
             self.top_header.setText(meta.get("title"))
 
-            selected_image_path = os.path.join(os.path.dirname(__file__), "..", "..", "gallery/images", meta.get("filename"))
-            pixmap = QPixmap(selected_image_path)
+            self.image_path = os.path.join(
+                os.path.dirname(__file__),
+                "..", "..",
+                "gallery/images",
+                meta.get("filename")
+            )
+
+            pixmap = QPixmap(self.image_path)
 
             if not pixmap.isNull():
                 scaled = pixmap.scaled(512, 512, Qt.KeepAspectRatio, Qt.SmoothTransformation)
@@ -133,8 +148,22 @@ class SelectedScreen(GridBackground):
         self.controller.set_mode(5)  # Switch to Transform screen
     
     def _on_return(self):
-      self.controller.set_selected_image(None)  # Clear selected image in AppController
-      self.controller.set_mode(2)  # Switch back to Gallery screen
+        self.controller.set_selected_image(None)  # Clear selected image in AppController
+        self.controller.set_mode(2)  # Switch back to Gallery screen
+
+        if SPI_MODE:
+            self.spi.init_displays()  # Re-initialize displays when returning to gallery
 
     def _on_begin_session(self):
-        print("Begin Session clicked")
+        if SPI_MODE and hasattr(self, "spi") and hasattr(self, "image_path"):
+            self.thread = QThread()
+            self.worker = SPIWorker(self.spi, "send_image", self.image_path)
+
+            self.worker.moveToThread(self.thread)
+
+            self.thread.started.connect(self.worker.run)
+            self.worker.finished.connect(self.thread.quit)
+            self.worker.finished.connect(self.worker.deleteLater)
+            self.thread.finished.connect(self.thread.deleteLater)
+
+            self.thread.start()
